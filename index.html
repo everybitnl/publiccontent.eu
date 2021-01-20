@@ -59,15 +59,6 @@
     <body>
         <form id="uploadForm">
             <fieldset>
-                <legend>Wat ga je uploaden?</legend>
-                <legend class="selected" style="display: none">Ik upload <strong>Beeld</strong></legend>
-                <p>
-                    <input type="radio" id="type-beeld" name="type" value="beeld">
-                    <label for="type-beeld">Beeld</label>
-                </p>
-            </fieldset>
-
-            <fieldset>
                 <legend>Naar welk platform wil je uploaden?</legend>
                 <legend class="selected" style="display: none">Ik upload naar <strong>Imgur</strong></legend>
                 <p>
@@ -116,7 +107,25 @@
                 var platformClients = {
                     "imgur": function () {
                         const clientID = '87c49970c63e832';
+                        var params = {};
                         var formData = new FormData();
+
+                        function parseQueryString() {
+                            const queryString = location.hash.substring(1);
+                            const regex = /([^&=]+)=([^&]*)/g;
+                            var m;
+                                
+                            while (m = regex.exec(queryString)) {
+                                params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+                            }
+                        }
+
+                        function auth() {
+                            parseQueryString();
+                            if (!params['access_token']) {
+                                window.location = 'https://api.imgur.com/oauth2/authorize?client_id=87c49970c63e832&response_type=token';
+                            }
+                        }
 
                         function upload() {
                             $.ajax({
@@ -127,7 +136,8 @@
                                 contentType: false,
                                 data: formData,
                                 headers: {
-                                    Authorization: 'Client-ID ' + clientID,
+                                    //Authorization: 'Client-ID ' + clientID,
+                                    Authorization: 'Bearer ' + params['access_token'],
                                     Accept: 'application/json'
                                 },
                                 mimeTpe: 'multipart/form-data'
@@ -150,6 +160,7 @@
                         }
 
                         return {
+                            auth,
                             upload,
                             addFile,
                             addDescription
@@ -157,16 +168,19 @@
                     }
                 };
 
-                var client = null;
+                var client;
 
-                $("input").change(function (e) {
+                $("input").click(function (e) {
                     let $fieldset = $(this).closest('fieldset');
                     $fieldset.children('legend').toggle();
                     $fieldset.children('p').toggle();
                     let name = $(this).attr('name');
                     switch (name) {
                         case 'platform': {
-                            client = new platformClients[$(this).val()]();
+                            let platform = $(this).val();
+                            window.localStorage['platform'] = platform;
+                            client = new platformClients[platform]();
+                            client.auth();
                             break;
                         }
                         case 'file': {
@@ -183,10 +197,16 @@
                         }
                     }
                 });
+
                 $("form").submit(function (e) {
                     e.preventDefault();
                     client.upload();
                 });
+
+                if (window.localStorage['platform']) {
+                    let platform = window.localStorage['platform'];
+                    $(`input[id=platform-${platform}`).click();
+                }
             })();
         </script>
     </body>
