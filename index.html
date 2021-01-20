@@ -99,8 +99,8 @@
             </fieldset>
         </form>
 
-        <div class="preview" style="display: none">
-            <img>
+        <div class="preview">
+            <img style="display: none">
             <a></a>
         </div>
 
@@ -149,7 +149,7 @@
                             }).done(function(theResponseData) {
                                 //const theResponseData = JSON.parse(theResponseJson);
                                 const theImageUrl = theResponseData.data.link;
-                                $(".preview img").attr("src", theImageUrl);
+                                $(".preview img").attr("src", theImageUrl).show();
                             });
                         }
 
