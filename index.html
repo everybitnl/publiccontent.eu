@@ -126,6 +126,9 @@
                             parseQueryString();
                             if (!params['access_token']) {
                                 window.location = 'https://api.imgur.com/oauth2/authorize?client_id=87c49970c63e832&response_type=token';
+                            } else {
+                                const href = `https://${params['account_username']}.imgur.com/all`;
+                                $(".preview a").attr("href", href).html(href);
                             }
                         }
 
@@ -147,9 +150,6 @@
                                 //const theResponseData = JSON.parse(theResponseJson);
                                 const theImageUrl = theResponseData.data.link;
                                 $(".preview img").attr("src", theImageUrl);
-                                const href = `https://${params['account_username']}.imgur.com/all`;
-                                $(".preview a").attr("href", href).html(href);
-                                $(".preview").show();
                             });
                         }
 
