@@ -58,7 +58,6 @@
     </head>
     <body>
         <form id="uploadForm">
-            <p class="logout" style="text-align: center; display: none"><a href="#">logout</a></p>
             <fieldset>
                 <legend>Naar welk platform wil je uploaden?</legend>
                 <legend class="selected" style="display: none">Ik upload naar <strong>Imgur</strong></legend>
@@ -67,6 +66,11 @@
                     <label for="platform-imgur">Imgur</label>
                 </p>
             </fieldset>
+
+            <p class="platform-status" style="text-align: center; display: none">
+                <a class="platform-status__platform-link" target="_blank"></a><br>
+                <a class="platform-status__logout-link" href="/">logout</a>
+            </p>
 
             <fieldset>
                 <legend>Selecteer je bestand</legend>
@@ -99,8 +103,8 @@
             </fieldset>
         </form>
 
-        <div class="preview">
-            <img style="display: none">
+        <div class="preview" style="display: none">
+            <img><br>
             <a target="_blank"></a>
         </div>
 
@@ -128,8 +132,8 @@
                                 window.location = 'https://api.imgur.com/oauth2/authorize?client_id=87c49970c63e832&response_type=token';
                             } else {
                                 const href = `https://${params['account_username']}.imgur.com/all`;
-                                $(".preview a").attr("href", href).html(href);
-                                $(".logout").show();
+                                $(".platform-status__platform-link").attr("href", href).html(href);
+                                $(".platform-status").show();
                             }
                         }
 
@@ -150,7 +154,10 @@
                             }).done(function(theResponseData) {
                                 //const theResponseData = JSON.parse(theResponseJson);
                                 const theImageUrl = theResponseData.data.link;
+                                const theImageId = theResponseDate.data.id;
                                 $(".preview img").attr("src", theImageUrl).show();
+                                $(".preview a").attr("href", `https://imgur.com/${theImageId}`);
+                                $(".preview").show();
                             });
                         }
 
@@ -181,7 +188,7 @@
                     switch (name) {
                         case 'platform': {
                             let platform = $(this).val();
-                            window.localStorage['platform'] = platform;
+                            window.localStorage.setItem('platform', platform);
                             client = new platformClients[platform]();
                             client.auth();
                             break;
@@ -206,14 +213,15 @@
                     client.upload();
                 });
 
-                $(".logout").click(function () {
+                $(".platform-status__logout-link").click(function () {
                     window.localStorage.removeItem('platform');
-                    window.location = '/';
                 });
 
-                if (window.localStorage['platform']) {
-                    let platform = window.localStorage['platform'];
-                    $(`input[id=platform-${platform}`).click();
+                {
+                    let platform = window.localStorage.getItem('platform');
+                    if (platform) {
+                        $(`input[id=platform-${platform}`).click();
+                    }
                 }
             })();
         </script>
