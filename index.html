@@ -113,6 +113,7 @@
                 var platformClients = {
                     "imgur": function () {
                         const clientID = '87c49970c63e832';
+
                         var params = {};
                         var formData = new FormData();
 
@@ -129,7 +130,7 @@
                         function auth() {
                             parseQueryString();
                             if (!params['access_token']) {
-                                window.location = 'https://api.imgur.com/oauth2/authorize?client_id=87c49970c63e832&response_type=token';
+                                window.location = `https://api.imgur.com/oauth2/authorize?client_id=${clientID}&response_type=token`;
                             } else {
                                 const href = `https://${params['account_username']}.imgur.com/all`;
                                 $(".platform-status__platform-link").attr("href", href).html(href);
