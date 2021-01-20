@@ -58,7 +58,7 @@
     </head>
     <body>
         <form id="uploadForm">
-            <p style="text-align: center"><a href="/">nieuwe upload</a></p>
+            <p class="logout" style="text-align: center"><a href="#">logout</a></p>
             <fieldset>
                 <legend>Naar welk platform wil je uploaden?</legend>
                 <legend class="selected" style="display: none">Ik upload naar <strong>Imgur</strong></legend>
@@ -129,6 +129,7 @@
                             } else {
                                 const href = `https://${params['account_username']}.imgur.com/all`;
                                 $(".preview a").attr("href", href).html(href);
+                                $(".logout").show();
                             }
                         }
 
@@ -203,6 +204,11 @@
                 $("form").submit(function (e) {
                     e.preventDefault();
                     client.upload();
+                });
+
+                $(".logout").click(function () {
+                    window.localStorage.removeItem('platform');
+                    window.location = '/';
                 });
 
                 if (window.localStorage['platform']) {
