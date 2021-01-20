@@ -170,7 +170,7 @@
 
                 var client;
 
-                $("input").click(function (e) {
+                $("input").change(function (e) {
                     let $fieldset = $(this).closest('fieldset');
                     $fieldset.children('legend').toggle();
                     $fieldset.children('p').toggle();
@@ -184,6 +184,7 @@
                             break;
                         }
                         case 'file': {
+                            console.log($(this).get(0).files);
                             client.addFile($(this).get(0).files[0]);
                             break;
                         }
