@@ -70,7 +70,7 @@
                 <legend>Selecteer je bestand</legend>
                 <legend class="selected" style="display: none">Ik upload bestand <strong>covfefe</strong></legend>
                 <p>
-                    <input type="file">
+                    <input type="file" name="file">
                 </p>
             </fieldset>
             
@@ -97,14 +97,70 @@
             </fieldset>
         </form>
         <script>
-            $("input").change(function (e) {
-                var $fieldset = $(this).closest('fieldset');
-                $fieldset.children('legend').toggle();
-                $fieldset.children('p').toggle();
-            });
-            $("form").submit(function (e) {
-                e.preventDefault();
-            });
+            (function () {
+                var platformClients = {
+                    "imgur": function () {
+                        const clientID = '87c49970c63e832';
+                        var uploadFile = null;
+
+                        function upload() {
+                            $.ajax({
+                                url: 'https://api.imgur.com/3/upload',
+                                type: 'post',
+                                data: {
+                                    'image': uploadFile,
+                                    'type': 'file',
+                                    'description': 'test'
+                                },
+                                headers: {
+                                    Authorization: 'Client-ID ' + clientID
+                                },
+                                dataType: 'json',
+                                success: function (r) {
+                                    console.log(r);
+                                }
+                            });
+                        }
+
+                        function setFile(aFile) {
+                            uploadFile = aFile;
+                        }
+
+                        return {
+                            upload,
+                            setFile
+                        };
+                    }
+                };
+
+                var client = null;
+
+                $("input").change(function (e) {
+                    let $fieldset = $(this).closest('fieldset');
+                    $fieldset.children('legend').toggle();
+                    $fieldset.children('p').toggle();
+                    let name = $(this).attr('name');
+                    switch (name) {
+                        case 'platform': {
+                            client = new platformClients[$(this).val()]();
+                            break;
+                        }
+                        case 'file': {
+                            client.setFile($(this).val());
+                            break;
+                        }
+                        default: {
+                            console.log(`TODO ${name} switch`);
+                            break;
+                        }
+                    }
+                });
+                $("form").submit(function (e) {
+                    e.preventDefault();
+                    const platform = $("input[name=platform]").val();
+                    client.upload();
+                });
+            })();
         </script>
     </body>
 </html>
