@@ -144,8 +144,6 @@
                             }).done(function(theResponseData) {
                                 //const theResponseData = JSON.parse(theResponseJson);
                                 const theImageUrl = theResponseData.data.link;
-                                console.log(theResponseData);
-                                console.log(theImageUrl);
                                 $(".preview img").attr("src", theImageUrl);
                                 $(".preview").show();
                             });
@@ -184,7 +182,6 @@
                             break;
                         }
                         case 'file': {
-                            console.log($(this).get(0).files);
                             client.addFile($(this).get(0).files[0]);
                             break;
                         }
