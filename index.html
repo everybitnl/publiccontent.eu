@@ -156,8 +156,10 @@
                                 //const theResponseData = JSON.parse(theResponseJson);
                                 const theImageUrl = theResponseData.data.link;
                                 const theImageId = theResponseData.data.id;
+                                const theImagePageUrl = `https://imgur.com/${theImageId}`;
                                 $(".preview img").attr("src", theImageUrl).show();
-                                $(".preview a").attr("href", `https://imgur.com/${theImageId}`);
+                                $(".preview a").attr("href", theImagePageUrl);
+                                $(".preview a").html(theImagePageUrl);
                                 $(".preview").show();
                             });
                         }
