@@ -147,15 +147,15 @@
                                 contentType: false,
                                 data: formData,
                                 headers: {
-                                    //Authorization: 'Client-ID ' + clientID,
-                                    Authorization: 'Bearer ' + params['access_token'],
+                                    //Authorization: `Client-ID ${clientID}`,
+                                    Authorization: `Bearer ${params['access_token']}`,
                                     Accept: 'application/json'
                                 },
                                 mimeTpe: 'multipart/form-data'
                             }).done(function(theResponseData) {
                                 //const theResponseData = JSON.parse(theResponseJson);
                                 const theImageUrl = theResponseData.data.link;
-                                const theImageId = theResponseDate.data.id;
+                                const theImageId = theResponseData.data.id;
                                 $(".preview img").attr("src", theImageUrl).show();
                                 $(".preview a").attr("href", `https://imgur.com/${theImageId}`);
                                 $(".preview").show();
