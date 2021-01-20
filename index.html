@@ -100,6 +100,7 @@
 
         <div class="preview" style="display: none">
             <img>
+            <a></a>
         </div>
 
         <script>
@@ -145,6 +146,8 @@
                                 //const theResponseData = JSON.parse(theResponseJson);
                                 const theImageUrl = theResponseData.data.link;
                                 $(".preview img").attr("src", theImageUrl);
+                                const href = `https://${params['account_username']}.imgur.com/all`;
+                                $(".preview a").attr("href", href).html(href);
                                 $(".preview").show();
                             });
                         }
