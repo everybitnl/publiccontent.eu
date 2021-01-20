@@ -40,6 +40,16 @@
                 font-size: 1em;
                 padding: 20px;
             }
+            .preview {
+                width: 440px;
+                margin: 20px auto;
+                text-align: center;
+            }
+            .preview img {
+                width: 70%;
+                border: 20px solid white;
+                box-shadow: 0 0 8px #aaa;
+            }
         </style>
         <script
             src="https://code.jquery.com/jquery-3.5.1.min.js"
@@ -96,39 +106,53 @@
                 <button>Upload</button>
             </fieldset>
         </form>
+
+        <div class="preview" style="display: none">
+            <img>
+        </div>
+
         <script>
             (function () {
                 var platformClients = {
                     "imgur": function () {
                         const clientID = '87c49970c63e832';
-                        var uploadFile = null;
+                        var formData = new FormData();
 
                         function upload() {
                             $.ajax({
-                                url: 'https://api.imgur.com/3/upload',
                                 type: 'post',
-                                data: {
-                                    'image': uploadFile,
-                                    'type': 'file',
-                                    'description': 'test'
-                                },
+                                url: 'https://api.imgur.com/3/image',
+                                crossDomain: true,
+                                processData: false,
+                                contentType: false,
+                                data: formData,
                                 headers: {
-                                    Authorization: 'Client-ID ' + clientID
+                                    Authorization: 'Client-ID ' + clientID,
+                                    Accept: 'application/json'
                                 },
-                                dataType: 'json',
-                                success: function (r) {
-                                    console.log(r);
-                                }
+                                mimeTpe: 'multipart/form-data'
+                            }).done(function(theResponseData) {
+                                //const theResponseData = JSON.parse(theResponseJson);
+                                const theImageUrl = theResponseData.data.link;
+                                console.log(theResponseData);
+                                console.log(theImageUrl);
+                                $(".preview img").attr("src", theImageUrl);
+                                $(".preview").show();
                             });
                         }
 
-                        function setFile(aFile) {
-                            uploadFile = aFile;
+                        function addFile(aFile) {
+                            formData.append("image", aFile);
+                        }
+
+                        function addDescription(aDescription) {
+                            formData.append("description", aDescription);
                         }
 
                         return {
                             upload,
-                            setFile
+                            addFile,
+                            addDescription
                         };
                     }
                 };
@@ -146,7 +170,11 @@
                             break;
                         }
                         case 'file': {
-                            client.setFile($(this).val());
+                            client.addFile($(this).get(0).files[0]);
+                            break;
+                        }
+                        case 'cc': {
+                            client.addDescription('CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0/');
                             break;
                         }
                         default: {
@@ -157,7 +185,6 @@
                 });
                 $("form").submit(function (e) {
                     e.preventDefault();
-                    const platform = $("input[name=platform]").val();
                     client.upload();
                 });
             })();
